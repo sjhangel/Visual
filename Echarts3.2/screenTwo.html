@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Screen2</title>
+        <style>
+            html, body{
+                width: 100%;
+                height: 100%;
+                margin-left: 0;
+                margin-right: 0;
+                padding: 0;
+                overflow: hidden;
+            } 
+            #one,#three{
+                float: left;
+                width: 49.8%;
+                height: 48%;
+            }
+            #two,#four{
+                float: right;
+                width: 49.8%;
+                height: 48%;
+            }
+            #one,#two{
+                margin-bottom:5px;
+            }
+        </style>
+        <script src="echarts/esl.js"></script>
+        <script src="echarts/config.js"></script>
+    </head>
+    <body>      
+        <div id="one"></div>
+        <div id="two"></div>
+        <div id="three"></div>
+        <div id="four"></div>
+        <script type="text/javascript">
+            require(
+                [
+                    'echarts',
+                    'map/js/china',
+                    'map/js/province/beijing',                      
+                    'zrender/vml/vml'
+                ],
+            function (ec) {
+                var oneChart=ec.init(document.getElementById('one'));               
+                var twoChart=ec.init(document.getElementById('two'));
+                var threeChart=ec.init(document.getElementById('three'));
+                var fourChart=ec.init(document.getElementById('four'));  
+                var ran=[
+                    {lng:Math.random(),lat:Math.random()},
+                    {lng:Math.random(),lat:Math.random()},
+                    {lng:Math.random(),lat:Math.random()},
+                    {lng:Math.random(),lat:Math.random()},
+                    {lng:Math.random(),lat:Math.random()},
+                    {lng:Math.random(),lat:Math.random()},
+                    {lng:Math.random(),lat:Math.random()},
+                ];
+                var Pi=3.1415927;
+                var x0=105,y0=35;
+                var theta=30,r=45,r2=70;
+                var y1=y0-r*Math.cos(Pi*theta/180);
+                var y2=y0+r*Math.cos(Pi*theta/180);
+                var y3=y0-r2*Math.cos(Pi*theta/180);
+                var y4=y0+r2*Math.cos(Pi*theta/180);
+                var geoCoordMap= {
+                    
+                    '被查询记录': [x0, y1+r*Math.cos(0)],
+                    '电商消费记录': [x0+r*Math.sin(Pi*theta/720), y1+r*Math.cos(Pi*theta/720)],
+                    '银行卡信息': [x0+r*Math.sin(Pi*theta*2/720), y1+r*Math.cos(Pi*theta*2/720)],
+                    '企业职位': [x0+r*Math.sin(Pi*theta*3/720), y1+r*Math.cos(Pi*theta*3/720)],
+                    '企业经营状况': [x0+r*Math.sin(Pi*theta*4/720), y1+r*Math.cos(Pi*theta*4/720)],
+                    '借贷记录': [x0+r*Math.sin(Pi*theta*3/720), y2-r*Math.cos(Pi*theta*3/720)],
+                    '逾期记录': [x0+r*Math.sin(Pi*theta*2/720), y2-r*Math.cos(Pi*theta*2/720)],
+                    '乘机记录': [x0+r*Math.sin(Pi*theta/720), y2-r*Math.cos(Pi*theta/720)],
+                    '车辆信息': [x0, y2-r*Math.cos(0)],
+                    '法院被执行人': [x0-r*Math.sin(Pi*theta/720), y2-r*Math.cos(Pi*theta/720)],
+                    '手机使用情况': [x0-r*Math.sin(Pi*theta*2/720), y2-r*Math.cos(Pi*theta*2/720)],
+                    '涉案信息': [x0-r*Math.sin(Pi*theta*3/720), y2-r*Math.cos(Pi*theta*3/720)],
+                    '拒贷记录': [x0-r*Math.sin(Pi*theta*4/720), y1+r*Math.cos(Pi*theta*4/720)],
+                    '个人证书': [x0-r*Math.sin(Pi*theta*3/720), y1+r*Math.cos(Pi*theta*3/720)],
+                    '身份证': [x0-r*Math.sin(Pi*theta*2/720), y1+r*Math.cos(Pi*theta*2/720)],
+                    '驾驶证': [x0-r*Math.sin(Pi*theta/720), y1+r*Math.cos(Pi*theta/720)],
+
+                    
+                    '百融金服': [x0+r2*Math.sin(Pi*theta/720), y3+r2*Math.cos(Pi*theta/720)],
+                    '考拉征信': [x0+r2*Math.sin(Pi*theta*2/720), y3+r2*Math.cos(Pi*theta*2/720)],
+                    '同盾科技': [x0+r2*Math.sin(Pi*theta/720), y4-r2*Math.cos(Pi*theta/720)],
+                    '鹏远征信': [x0+r2*Math.sin(Pi*theta*2/720), y4-r2*Math.cos(Pi*theta*2/720)],
+                    //'中佳信':  [105, 35],
+                    '华道征信': [x0-r2*Math.sin(Pi*theta/720), y3+r2*Math.cos(Pi*theta/720)],
+                    '前海征信': [x0-r2*Math.sin(Pi*theta*2/720), y3+r2*Math.cos(Pi*theta*2/720)],
+                    '91征信': [x0-r2*Math.sin(Pi*theta/720), y4-r2*Math.cos(Pi*theta/720)],
+                    '中诚信': [x0-r2*Math.sin(Pi*theta*2/720), y4-r2*Math.cos(Pi*theta*2/720)],
+                    
+                    '反欺诈':[x0-5,y0],
+                    '偿还能力':[x0+5,y0],
+                    
+
+                    '提前还贷模型': [117, 46],
+                    '资金成本': [123, 44],
+                    '管理成本':  [126, 40],
+                    '个人信用模型': [125, 36],
+                    '蒙特卡洛算法':  [115, 40],
+                    '贷款价格':[90,28],
+
+                    '政策因素': [100, 43],
+                    '经济因素': [97, 41],
+                    '周边配套':  [91, 37],
+                    '交通条件': [94, 39],
+                    '人口变化':  [88, 35],
+                    '小区平均价格':[95,31],
+                    '楼层': [117, 41],
+                    '朝向': [114, 43],
+                    '景观':  [126, 35],
+                    '安静度': [120, 39],
+                    '住房结构':  [123, 37],
+                    '价格因子':[119,31],
+                    '评估价格':[107,27],
+                    
+                    '房产通用性': [79.65+ran[0].lng*49.25, 32.7+ran[0].lat*12.7],
+                    '独立使用性': [79.65+ran[1].lng*49.25, 32.7+ran[1].lat*12.7],
+                    '分割转让性':  [79.65+ran[2].lng*49.25, 32.7+ran[2].lat*12.7],
+                    '总价值大小': [79.65+ran[3].lng*49.25, 32.7+ran[3].lat*12.7],
+                    '开发程度':  [79.65+ran[4].lng*49.25, 32.7+ran[4].lat*12.7],
+                    '区位状况': [79.65+ran[5].lng*49.25, 32.7+ran[5].lat*12.7],
+                    '市场状况': [79.65+ran[6].lng*49.25, 32.7+ran[6].lat*12.7],
+                    '变现时间': [99.35,30],
+                    '折扣率': [109.2,30], 
+                };
+                
+                var dataLine1 = [
+                    [{ name: '华道征信'}, { name: '车辆信息'}],
+                    [{ name: '华道征信'}, { name: '电商消费记录' }],
+                    [{ name: '华道征信'}, { name: '企业职位'}],
+                    [{ name: '华道征信'}, { name: '被查询记录' }],
+                    [{ name: '华道征信'}, { name: '身份证' }],
+                    
+                    [{ name: '考拉征信' }, { name: '车辆信息'}],
+                    [{ name: '考拉征信' }, { name: '企业职位'}],
+                    [{ name: '考拉征信' }, { name: '企业经营状况'}],
+                    [{ name: '考拉征信' }, { name: '乘机记录'}],
+                    [{ name: '考拉征信' }, { name: '驾驶证'}],
+                    
+                    [{ name: '中诚信' }, { name: '企业职位'}],
+                    [{ name: '中诚信' }, { name: '法院被执行人'}],
+                    [{ name: '中诚信' }, { name: '涉案信息'}],
+                    [{ name: '中诚信' }, { name: '身份证'}],
+                    [{ name: '中诚信' }, { name: '驾驶证'}],
+                    
+                    [{ name: '鹏远征信' }, { name: '车辆信息'}],
+                    [{ name: '鹏远征信' }, { name: '企业职位'}],
+                    [{ name: '鹏远征信' }, { name: '企业经营状况'}],
+                    [{ name: '鹏远征信' }, { name: '被查询记录'}],
+                    [{ name: '鹏远征信' }, { name: '法院被执行人'}],
+                    [{ name: '鹏远征信' }, { name: '驾驶证'}],
+                    
+                    [{ name: '前海征信' }, { name: '车辆信息'}],
+                    [{ name: '前海征信' }, { name: '企业职位'}],
+                    [{ name: '前海征信' }, { name: '企业经营状况'}],
+                    [{ name: '前海征信' }, { name: '涉案信息'}],
+                    
+                    [{ name: '91征信' }, { name: '借贷记录'}],
+                    [{ name: '91征信' }, { name: '逾期记录'}],
+                    
+                    [{ name: '百融金服' }, { name: '银行卡信息'}],
+                    [{ name: '百融金服' }, { name: '借贷记录'}],
+                    [{ name: '百融金服' }, { name: '逾期记录'}],
+                    [{ name: '百融金服' }, { name: '乘机记录'}],
+                    [{ name: '百融金服' }, { name: '法院被执行人'}],
+                    
+                    [{ name: '同盾科技' }, { name: '借贷记录'}],
+                    [{ name: '同盾科技' }, { name: '电商消费记录'}],
+                ];
+                 var dataLine11 = [
+                    //[{ name: '车辆信息' }, { name: '反欺诈'}],
+                    [{ name: '电商消费记录' }, { name: '反欺诈'}],
+                    [{ name: '银行卡信息' }, { name: '反欺诈'}],
+                    //[{ name: '企业职位' }, { name: '反欺诈'}],
+                    //[{ name: '企业经营状况' }, { name: '反欺诈'}],
+                    [{ name: '借贷记录' }, { name: '反欺诈'}],
+                    [{ name: '逾期记录' }, { name: '反欺诈'}],
+                    //[{ name: '乘机记录' }, { name: '反欺诈'}],
+                    [{ name: '被查询记录' }, { name: '反欺诈'}],
+                    [{ name: '法院被执行人' }, { name: '反欺诈'}],
+                    [{ name: '手机使用情况' }, { name: '反欺诈'}],
+                    [{ name: '涉案信息' }, { name: '反欺诈'}],
+                    [{ name: '拒贷记录' }, { name: '反欺诈'}],
+                    [{ name: '个人证书' }, { name: '反欺诈'}],
+                    [{ name: '身份证' }, { name: '反欺诈'}],
+                    [{ name: '驾驶证' }, { name: '反欺诈'}],
+
+                    [{ name: '车辆信息' }, { name: '偿还能力'}],
+                    [{ name: '电商消费记录' }, { name: '偿还能力'}],
+                    [{ name: '银行卡信息' }, { name: '偿还能力'}],
+                    [{ name: '企业职位' }, { name: '偿还能力'}],
+                    [{ name: '企业经营状况' }, { name: '偿还能力'}],
+                    [{ name: '借贷记录' }, { name: '偿还能力'}],
+                    //[{ name: '逾期记录' }, { name: '偿还能力'}],
+                    [{ name: '乘机记录' }, { name: '偿还能力'}],
+                    //[{ name: '被查询记录' }, { name: '偿还能力'}],
+                    //[{ name: '法院被执行人' }, { name: '偿还能力'}],
+                    [{ name: '手机使用情况' }, { name: '偿还能力'}],
+                    //[{ name: '涉案信息' }, { name: '偿还能力'}],
+                    //[{ name: '拒贷记录' }, { name: '偿还能力'}],
+                    [{ name: '个人证书' }, { name: '偿还能力'}],
+                    [{ name: '身份证' }, { name: '偿还能力'}],
+                    [{ name: '驾驶证' }, { name: '偿还能力'}],
+                ];
+                var dataPoint1 = [
+                    { name: '考拉征信', value: 110 },
+                    { name: '鹏远征信', value: 100 },
+                    { name: '百融金服', value: 85 },
+                    { name: '同盾科技', value: 80 },
+                    { name: '电商消费记录',value: 130},
+                    { name: '银行卡信息', value: 130},
+                    { name: '企业职位',value: 130},
+                    { name: '企业经营状况', value: 130},
+                    { name: '借贷记录',value: 130},
+                    { name: '逾期记录', value: 130},
+                    { name: '乘机记录',value: 130},
+                ];
+                var dataPoint11 = [
+                    { name: '华道征信', value: 115 },
+                    { name: '中诚信', value: 105 },
+                    { name: '前海征信', value: 95 },
+                    { name: '91征信', value: 90 },
+                    { name: '法院被执行人',value: 130},
+                    { name: '手机使用情况', value: 130},
+                    { name: '涉案信息',value: 130},
+                    { name: '拒贷记录', value: 130},
+                    { name: '个人证书',value: 130},
+                    { name: '身份证', value: 130},
+                    { name: '驾驶证',value: 130}
+                ];
+                var dataPoint12=[
+                    { name: '被查询记录', value: 130 },
+                    { name: '反欺诈', value: 350 },
+                    { name: '偿还能力', value: 350 },
+                ];
+                var dataPoint13=[
+                { name: '车辆信息', value: 130 },
+                ];
+                //图二
+                var dataLine3 = [
+                    [{ name: '提前还贷模型'}, { name: '蒙特卡洛算法', value: 95 }],                    
+                    [{ name: '资金成本'}, { name: '蒙特卡洛算法'}],
+                    [{ name: '管理成本'}, { name: '蒙特卡洛算法'}],
+                    [{ name: '个人信用模型'}, { name: '蒙特卡洛算法'}],
+                    ];
+
+                var dataLine4=[
+                    [{ name: '蒙特卡洛算法'}, { name: '贷款价格', value: 120 }],
+                    [{ name: '贷款价格'}, { name: '蒙特卡洛算法', value: 90 }],
+                ];
+                var dataPoint2 = [
+                    { name: '提前还贷模型', value: 100 },
+                    { name: '资金成本', value: 95 },
+                    { name: '管理成本', value: 90 },
+                    { name: '个人信用模型', value: 80 },
+                    { name: '蒙特卡洛算法', value: 150 },
+                    { name: '贷款价格', value: 150 },
+                    { name: '蒙特卡洛算法', value: 150 },
+                    { name: '贷款价格', value: 150 },
+                ];
+                //图三
+                var dataLine5 = [
+                    [{ name: '政策因素'}, { name: '小区平均价格', value: 90 }],                    
+                    [{ name: '经济因素'}, { name: '小区平均价格', value: 90 }],
+                    [{ name: '周边配套'}, { name: '小区平均价格', value: 90 }],
+                    [{ name: '交通条件'}, { name: '小区平均价格', value: 90 }],
+                    [{ name: '人口变化'}, { name: '小区平均价格', value: 90 }],
+                    [{ name: '价格因子'}, { name: '楼层', value: 90 }],
+                    [{ name: '价格因子'}, { name: '朝向', value: 90 }],
+                    [{ name: '价格因子'}, { name: '景观', value: 90 }],
+                    [{ name: '价格因子'}, { name: '安静度', value: 90 }],
+                    [{ name: '价格因子'}, { name: '住房结构', value: 90 }],
+                ];
+
+                var dataLine6=[
+                    [{ name: '小区平均价格'}, { name: '评估价格', value: 90 }],
+                    [{ name: '价格因子'}, { name: '评估价格', value: 90 }],
+                    [{ name: '评估价格'}, { name: '小区平均价格', value: 90 }],
+                    [{ name: '评估价格'}, { name: '价格因子', value: 90 }]
+                ];
+                var dataPoint3 = [
+                    { name: '楼层', value: 148 },
+                    { name: '朝向', value: 150 },
+                    { name: '景观', value: 142 },
+                    { name: '安静度', value: 146 },
+                    { name: '住房结构', value: 144 },
+                    { name: '价格因子', value: 130 },
+                ];
+                var dataPoint30 = [
+                    { name: '评估价格', value: 200 },
+                ];
+                var dataPoint33=[
+                    { name: '政策因素', value: 100 },
+                    { name: '经济因素', value: 98 },
+                    { name: '周边配套', value: 94 },
+                    { name: '交通条件', value: 96 },
+                    { name: '人口变化', value: 92 },
+                    { name: '小区平均价格', value: 130 },
+                ];
+                //图四
+                
+                var dataPoint41 = [
+                    { name: '房产通用性', value: 245 },
+                    { name: '独立使用性', value: 95 },
+                    { name: '分割转让性', value: 90 },
+                    { name: '总价值大小', value: 180 },
+                    { name: '开发程度', value: 150 },
+                    { name: '区位状况', value: 170 },
+                    { name: '市场状况', value: 180 },
+                ];
+                for(var i=0;i<10;i++){
+                    for(var j=0;j<7;j++){
+                        var dataPoint42=[
+                    { name: '变现时间', value: Math.round(70+10*ran[0].lng+10*ran[1].lng+10*ran[2].lng+10*ran[3].lng+10*ran[4].lng+10*ran[5].lng+10*ran[6].lng) },
+                    { name: '折扣率', value: Math.round(100*(0.9+ran[0].lat/10)*(0.9+ran[1].lat/10)*(0.9+ran[2].lat/10)*(0.9+ran[3].lat/10)*(0.9+ran[4].lat/10)*(0.9+ran[5].lat/10)*(0.9+ran[6].lat/10))/100},
+                ];
+                    }
+                }
+                
+                var dataLine41 = [
+                    [dataPoint41[0],dataPoint42[0],245],
+                    [dataPoint41[1],dataPoint42[0],95],
+                    [dataPoint41[2],dataPoint42[0],90],
+                    [dataPoint41[3],dataPoint42[0],180],
+                    [dataPoint41[4],dataPoint42[0],150],
+                    [dataPoint41[5],dataPoint42[0],170],
+                    [dataPoint41[6],dataPoint42[0],180],
+                    [dataPoint41[0],dataPoint42[1],245],
+                    [dataPoint41[1],dataPoint42[1],95],
+                    [dataPoint41[2],dataPoint42[1],90],
+                    [dataPoint41[3],dataPoint42[1],180],
+                    [dataPoint41[4],dataPoint42[1],150],
+                    [dataPoint41[5],dataPoint42[1],170],
+                    [dataPoint41[6],dataPoint42[1],180],
+                ];
+                
+                var convertDataLine = function (data) {
+                    var res = [];
+                    for (var i = 0; i < data.length; i++) {
+                        var dataItem = data[i];
+                        var fromCoord = geoCoordMap[dataItem[0].name];
+                        var toCoord = geoCoordMap[dataItem[1].name];
+                        if (fromCoord && toCoord) {
+                            res.push({
+                                fromName: dataItem[0].name,
+                                toName: dataItem[1].name,
+                                coords: [fromCoord, toCoord]
+                            });
+                        }
+                    }
+                    return res;
+                };
+                var convertData = function (data) {
+                    var res = [];
+                    for (var i = 0; i < data.length; i++) {
+                        var geoCoord = geoCoordMap[data[i].name];
+                        if (geoCoord) {
+                            res.push({
+                                name: data[i].name,
+                                value: geoCoord.concat(data[i].value)
+                            });
+                        }
+                    }
+                    return res;
+                };
+                option1={
+                    backgroundColor: '#1b1b1b',
+                    color: ['#fff', '#9687d9', '#70a0de', '#00c4aa', '#a9d351', '#dde04b', '#ffc338','#ff9151','#ff5d64'],
+                    title: {
+                        text: '个人征信模型',
+                        subtext: '',
+                        x: 'left',
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        x: 'left',
+                        data: [],                       
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },                    
+                    geo: {
+                        map: 'china',
+                        left: 0,
+                        right: 0,
+                        silent: true,
+                        itemStyle: {
+                            normal: {
+                                borderColor: '#1b1b1b',
+                                color: '#1b1b1b'
+                            }
+                        }
+                    },
+                    visualMap: {
+                        min: 0,
+                        max: 150,
+                        text:['High','Low'],
+                        realtime: false,
+                        calculable: true,
+                        show:false,
+                        inRange: {
+                            color: ['#9687d9', '#70a0de', '#00c4aa', '#a9d351', '#dde04b', '#ffc338','#ff9151','#ff5d64']
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'label',
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            data: convertData(dataPoint1),
+                            symbolSize: function (val) {
+                                return val[2] / 10;
+                            },
+                            label: {
+                                normal: {
+                                    formatter: '{b}',
+                                    position: 'right',
+                                    show: true
+                                },
+                                emphasis: {
+                                    show: true
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#ddb926'
+                                }
+                            }
+                        },
+                        {
+                            name: 'label',
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            data: convertData(dataPoint12),
+                            symbolSize: function (val) {
+                                return val[2] / 10;
+                            },
+                            label: {
+                                normal: {
+                                    formatter: '{b}',
+                                    position: 'top',
+                                    show: true
+                                },
+                                emphasis: {
+                                    show: true
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#ddb926'
+                                }
+                            }
+                        },
+                        {
+                            name: 'label',
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            data: convertData(dataPoint13),
+                            symbolSize: function (val) {
+                                return val[2] / 10;
+                            },
+                            label: {
+                                normal: {
+                                    formatter: '{b}',
+                                    position: 'bottom',
+                                    show: true
+                                },
+                                emphasis: {
+                                    show: true
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#ddb926'
+                                }
+                            }
+                        },
+                        {
+                            name: 'label',
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            data: convertData(dataPoint11),
+                            symbolSize: function (val) {
+                                return val[2] / 10;
+                            },
+                            label: {
+                                normal: {
+                                    formatter: '{b}',
+                                    position: 'left',
+                                    show: true
+                                },
+                                emphasis: {
+                                    show: true
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#ddb926'
+                                }
+                            }
+                        },
+                        {
+                            type: 'lines',
+                            coordinateSystem: 'geo',
+                            data: convertDataLine(dataLine1),
+                            large: true,
+                            largeThreshold: 100,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.06,
+                                    width: 1,
+                                    curveness: 0.2
+                                }
+                            },
+                            effect: {
+                                constantSpeed: 20,
+                                show: true,
+                                trailLength: 0.1,
+                                symbolSize: 1.5
+                            },
+                            zlevel:1,
+                            // 设置混合模式为叠加
+                            blendMode: 'lighter'      
+                        },
+                        {
+                            type: 'lines',
+                            coordinateSystem: 'geo',
+                            data: convertDataLine(dataLine11),
+                            large: true,
+                            largeThreshold: 100,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.1,
+                                    width: 1,
+                                    curveness: 0
+                                }
+                            },
+                            effect: {
+                                constantSpeed: 20,
+                                show: true,
+                                trailLength: 0.1,
+                                symbolSize: 1.5
+                            },
+                            zlevel:1,
+                            // 设置混合模式为叠加
+                            blendMode: 'lighter'      
+                        },
+                                 
+                       
+                    ]
+                               
+                };
+                
+                
+                option2={
+                    backgroundColor: '#1b1b1b',
+                    color: ['#ff5d64'],
+                    title: {
+                        text: '抵押贷款定价模型',
+                        subtext: '',
+                        x: 'left',
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        x: 'left',
+                        data: [],                       
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },                    
+                    geo: {
+                        map: 'china',
+                        left: 0,
+                        right: 0,
+                        silent: true,
+                        itemStyle: {
+                            normal: {
+                                borderColor: '#1b1b1b',
+                                color: '#1b1b1b'
+                            }
+                        }
+                    },
+                    visualMap: {
+                        min: 80,
+                        max: 150,
+                        text:['High','Low'],
+                        realtime: false,
+                        calculable: true,
+                        show:false,
+                        inRange: {
+                            color: ['#9687d9', '#70a0de', '#00c4aa', '#a9d351', '#dde04b', '#ffc338','#ff9151','#ff5d64']
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'label',
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            data: convertData(dataPoint2),
+                            symbolSize: function (val) {
+                                return val[2] / 10;
+                            },
+                            label: {
+                                normal: {
+                                    formatter: '{b}',
+                                    position: 'bottom',
+                                    show: true
+                                },
+                                emphasis: {
+                                    show: true
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#ff8388'
+                                }
+                            },
+                            zlevel:1,
+                        },  
+                        {
+                            type: 'lines',
+                            coordinateSystem: 'geo',
+                            data: convertDataLine(dataLine3),
+                            large: true,
+                            largeThreshold: 100,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.05,
+                                    color:'#a0c4aa',
+                                    width: 1,
+                                    curveness: 0
+                                }
+                            },
+                            effect: {
+                                constantSpeed: 20,
+                                show: true,
+                                trailLength: 0.1,
+                                symbolSize: 1.5
+                            },
+                            zlevel:1,
+                            // 设置混合模式为叠加
+                            blendMode: 'lighter'      
+                        },     
+                        {
+                            type: 'lines',
+                            coordinateSystem: 'geo',
+                            data: convertDataLine(dataLine4),
+                            large: true,
+                            largeThreshold: 100,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.05,
+                                    width: 1,
+                                    curveness: 0.5
+                                }
+                            },
+                            effect: {
+                                constantSpeed: 20,
+                                show: true,
+                                trailLength: 0.1,
+                                symbolSize: 1.5
+                            },
+                            zlevel:1,
+                            // 设置混合模式为叠加
+                            blendMode: 'lighter'      
+                        },
+                        {
+                            type: 'lines',
+                            coordinateSystem: 'geo',
+                            data: [
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.01    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.015   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.02    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.025   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.03    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.035   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.04    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.045   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.05    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.055   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.06    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.065   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.07    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.075   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.08    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.085   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.09    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.095   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.1     +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.105   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.11    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.115   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.12    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.125   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.13    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.135   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.14    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.145   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.15    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.155   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.16    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.165   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.17    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.175   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.18    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.185   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.19    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.195   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.2     +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.205   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.21    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.215   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.22    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.225   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.23    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.235   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.24    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.245   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.25    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.255   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.26    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.265   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.27    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.275   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.28    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.285   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.29    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.295   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.3     +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.305   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.31    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.315   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.32    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.325   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.33    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.335   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.34    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.345   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.35    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.355   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.36    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.365   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.37    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.375   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.38    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.385   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.39    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.395   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.4     +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.405   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.41    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.415   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.42    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.425   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.43    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.435   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.44    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.445   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.45    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.455   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.46    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.465   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.47    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.475   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.48    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.485   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.49    +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.495   +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.5     +   Math.random()/200}}},
+{fromName:'蒙特卡洛算法',toName:'贷款价格',coords:[[115,40],[90,28]],lineStyle:{normal:{curveness:    0.505   +   Math.random()/200}}},      
+                            ],
+                            largeThreshold: 100,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.05,
+                                    width: 1,
+                                    curveness: 0.5
+                                }
+                            },
+                            effect: {
+                                constantSpeed: 20,
+                                show: true,
+                                trailLength: 0.1,
+                                symbolSize: 1.5
+                            },
+                            zlevel:1,
+                            // 设置混合模式为叠加
+                            blendMode: 'lighter'      
+                        },
+                        {
+                            type: 'lines',
+                            coordinateSystem: 'geo',
+                            data: [
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.01    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.015   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.02    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.025   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.03    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.035   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.04    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.045   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.05    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.055   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.06    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.065   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.07    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.075   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.08    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.085   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.09    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.095   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.1     +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.105   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.11    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.115   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.12    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.125   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.13    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.135   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.14    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.145   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.15    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.155   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.16    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.165   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.17    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.175   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.18    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.185   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.19    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.195   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.2     +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.205   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.21    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.215   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.22    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.225   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.23    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.235   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.24    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.245   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.25    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.255   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.26    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.265   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.27    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.275   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.28    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.285   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.29    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.295   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.3     +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.305   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.31    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.315   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.32    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.325   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.33    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.335   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.34    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.345   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.35    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.355   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.36    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.365   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.37    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.375   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.38    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.385   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.39    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.395   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.4     +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.405   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.41    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.415   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.42    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.425   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.43    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.435   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.44    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.445   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.45    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.455   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.46    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.465   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.47    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.475   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.48    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.485   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.49    +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.495   +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.5     +   Math.random()/200}}},
+{fromName:'贷款价格',toName:'蒙特卡洛算法',coords:[[90,28],[115,40]],lineStyle:{normal:{curveness:    0.505   +   Math.random()/200}}},
+                            ],
+                            largeThreshold: 100,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.05,
+                                    width: 1,
+                                    curveness: 0.02
+                                }
+                            },
+                            effect: {
+                                constantSpeed: 20,
+                                show: true,
+                                trailLength: 0.1,
+                                symbolSize: 1.5
+                            },
+                            zlevel:1,
+                            // 设置混合模式为叠加
+                            blendMode: 'lighter'      
+                        },
+                    ]
+                               
+                };
+                option3={
+                    backgroundColor: '#1b1b1b',
+                    color: ['#fff', '#9687d9', '#70a0de', '#00c4aa', '#a9d351', '#dde04b', '#ffc338','#ff9151','#ff5d64'],
+                    title: {
+                        text: '住房估价模型',
+                        subtext: '',
+                        x: 'left',
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        x: 'left',
+                        data: [],                       
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },                    
+                    geo: {
+                        map: 'china',
+                        left: 0,
+                        right: 0,
+                        silent: true,
+                        itemStyle: {
+                            normal: {
+                                borderColor: '#1b1b1b',
+                                color: '#1b1b1b'
+                            }
+                        }
+                    },
+                    visualMap: {
+                        min: 80,
+                        max: 150,
+                        text:['High','Low'],
+                        realtime: false,
+                        calculable: true,
+                        show:false,
+                        inRange: {
+                            color: ['#9687d9', '#70a0de', '#00c4aa', '#a9d351', '#dde04b', '#ffc338','#ff9151','#ff5d64']
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'label',
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            data: convertData(dataPoint3),
+                            symbolSize: function (val) {
+                                return val[2] / 10;
+                            },
+                            label: {
+                                normal: {
+                                    formatter: '{b}',
+                                    position: 'right',
+                                    show: true
+                                },
+                                emphasis: {
+                                    show: true
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#ddb926'
+                                }
+                            }
+                        },
+                        {
+                            name: 'label',
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            data: convertData(dataPoint30),
+                            symbolSize: function (val) {
+                                return val[2] / 10;
+                            },
+                            label: {
+                                normal: {
+                                    formatter: '{b}',
+                                    position: [-10,-30],
+                                    show: true
+                                },
+                                emphasis: {
+                                    show: true
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#ddb926'
+                                }
+                            }
+                        },
+                        {
+                            name: 'label',
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            data: convertData(dataPoint33),
+                            symbolSize: function (val) {
+                                return val[2] / 10;
+                            },
+                            label: {
+                                normal: {
+                                    formatter: '{b}',
+                                    position: 'left',
+                                    show: true
+                                },
+                                emphasis: {
+                                    show: true
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#ddb926'
+                                }
+                            }
+                        },
+                        {
+                            type: 'lines',
+                            coordinateSystem: 'geo',
+                            data: convertDataLine(dataLine5),
+                            large: true,
+                            largeThreshold: 100,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.05,
+                                    width: 1,
+                                    curveness: 0.4
+                                }
+                            },
+                            effect: {
+                                constantSpeed: 20,
+                                show: true,
+                                trailLength: 0.1,
+                                symbolSize: 1.5
+                            },
+                            zlevel:1,
+                            // 设置混合模式为叠加
+                            blendMode: 'lighter'      
+                        },         
+                        {
+                            type: 'lines',
+                            coordinateSystem: 'geo',
+                            data: convertDataLine(dataLine6),
+                            large: true,
+                            largeThreshold: 100,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.05,
+                                    width: 1,
+                                    curveness: 0.2
+                                }
+                            },
+                            effect: {
+                                constantSpeed: 20,
+                                show: true,
+                                trailLength: 0.1,
+                                symbolSize: 1.5
+                            },
+                            zlevel:1,
+                            // 设置混合模式为叠加
+                            blendMode: 'lighter'      
+                        },
+                        {
+                            type: 'lines',
+                            coordinateSystem: 'geo',
+                            data: convertDataLine(dataLine6),
+                            large: true,
+                            largeThreshold: 100,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.05,
+                                    width: 1,
+                                    curveness: 0.3
+                                }
+                            },
+                            effect: {
+                                constantSpeed: 20,
+                                show: true,
+                                trailLength: 0.1,
+                                symbolSize: 1.5
+                            },
+                            zlevel:1,
+                            // 设置混合模式为叠加
+                            blendMode: 'lighter'      
+                        },
+                        {
+                            type: 'lines',
+                            coordinateSystem: 'geo',
+                            data: convertDataLine(dataLine6),
+                            large: true,
+                            largeThreshold: 100,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.05,
+                                    width: 1,
+                                    curveness: 0.1
+                                }
+                            },
+                            effect: {
+                                constantSpeed: 20,
+                                show: true,
+                                trailLength: 0.1,
+                                symbolSize: 1.5
+                            },
+                            zlevel:1,
+                            // 设置混合模式为叠加
+                            blendMode: 'lighter'      
+                        },
+                    ]
+                               
+                };
+                
+                option4={
+                    backgroundColor: '#1b1b1b',
+                    color: ['#fff', '#9687d9', '#70a0de', '#00c4aa', '#a9d351', '#dde04b', '#ffc338','#ff9151','#ff5d64'],
+                    title: {
+                        text: '房产流动性模型',
+                        subtext: '',
+                        x: 'left',
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        x: 'left',
+                        data: [],                       
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },    
+                    xAxis: {
+                        type: 'value',
+                        name: '时间因子',
+                        max: 20,
+                        min: 10,
+                        nameGap: 25,
+                        nameLocation: 'middle',
+                        nameTextStyle: {
+                            fontSize: 18
+                        },
+                        splitLine: {
+                            show: false
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#ccc'
+                            }
+                        },
+                        axisLabel: {
+                            formatter: '{value} 天'
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '折扣因子',
+                        max: 1,
+                        min: 0.85,
+                        nameTextStyle: {
+                            color: '#fff',
+                            fontSize: 18
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#ccc'
+                            }
+                        },
+                        splitLine: {
+                            show: false
+                        },
+                        axisLabel: {
+                            formatter: '{value} '
+                        }
+                    },
+                    
+                    geo: {
+                        map: 'china',
+                        left: 0,
+                        right: 0,
+                        silent: true,
+                        itemStyle: {
+                            normal: {
+                                borderColor: '#1b1b1b',
+                                color: '#1b1b1b'
+                            }
+                        }
+                    },
+                    visualMap: {
+                        min: 0,
+                        max: 300,
+                        calculable: true,
+                        show:false,
+                        inRange: {
+                            color: ['#d560c4', '#9687d9', '#70a0de', '#00c4aa', '#a9d351', '#dde04b', '#ffc338','#ff9151','#ff5d64']
+                        },
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'label',
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            data: convertData(dataPoint41),
+                            symbolSize: function (val) {
+                                return val[2] / 10;
+                            },
+                            label: {
+                                normal: {
+                                    formatter: '{b}',
+                                    position: 'top',
+                                    show: true
+                                },
+                                emphasis: {
+                                    show: true
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#ddb926'
+                                }
+                            }
+                        },  
+                        {
+                            name: 'label1',
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            data: convertData(dataPoint42),
+                            symbolSize: 24,
+                            label: {
+                                normal: {
+                                    position: [-40,10],
+                                    show: true
+                                },
+                                emphasis: {
+                                    show: true
+                                }
+                            },
+                            
+                        },  
+                        {
+                            name: 'label2',
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo', 
+                            data: convertData(dataPoint42),
+                            symbolSize: 24,
+                            label: {
+                                normal: {
+                                    formatter: '{b}',
+                                    position: [-50,-5],
+                                    show: true
+                                },
+                                emphasis: {
+                                    show: true
+                                }
+                            },
+                            
+                        },  
+                        {
+                            type: 'lines',
+                            coordinateSystem: 'geo',
+                            data: convertDataLine(dataLine41),
+                            large: true,
+                            largeThreshold: 100,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.05,
+                                    width: 1,
+                                    curveness: 0.1
+                                }
+                            },
+                            effect: {
+                                constantSpeed: 20,
+                                show: true,
+                                trailLength: 0.1,
+                                symbolSize: 1.5
+                            },
+                            zlevel:1,
+                            // 设置混合模式为叠加
+                            blendMode: 'lighter'      
+                        },  
+                    ],
+                    
+                };
+                oneChart.setOption(option1);
+                twoChart.setOption(option2);
+                threeChart.setOption(option3);
+                fourChart.setOption(option4);
+                window.onresize = function(){
+                    oneChart.resize();
+                    twoChart.resize();
+                    threeChart.resize();
+                    fourChart.resize();
+                }
+            })
+        </script>
+    </body>
+</html>
